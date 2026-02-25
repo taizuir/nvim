@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>todo-comments — reference</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,300&family=Unbounded:wght@700;900&display=swap');
+
+:root {
+  --bg:    #0d0c0b;
+  --bg2:   #13120f;
+  --bg3:   #1a1915;
+  --line:  #2a2920;
+  --text:  #c5bfa8;
+  --muted: #4a4840;
+
+  --fix:  #e82424;
+  --todo: #7fb4ca;
+  --hack: #ff9e3b;
+  --warn: #ff9e3b;
+  --perf: #c0a36e;
+  --note: #98bb6c;
+  --test: #957fb8;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* scanline overlay */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,.08) 2px,
+    rgba(0,0,0,.08) 4px
+  );
+  pointer-events: none;
+  z-index: 100;
+}
+
+main {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+}
+
+/* ── HEADER ── */
+.header {
+  margin-bottom: 52px;
+  position: relative;
+}
+.header-top {
+  font-size: 10px;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+.title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: clamp(2.4rem, 7vw, 4.8rem);
+  font-weight: 900;
+  line-height: .95;
+  letter-spacing: -.02em;
+}
+.title .dim  { color: var(--muted); }
+.title .acc  { color: var(--note); }
+
+.header-sub {
+  margin-top: 16px;
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: .06em;
+  border-left: 2px solid var(--line);
+  padding-left: 12px;
+}
+
+/* ── KEYWORD CARDS ── */
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 48px;
+}
+
+.card {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  border: 1px solid var(--line);
+  background: var(--bg2);
+  overflow: hidden;
+  position: relative;
+  transition: transform .1s, border-color .1s;
+  cursor: default;
+}
+.card:hover {
+  transform: translateX(4px);
+  border-color: var(--card-color);
+}
+.card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--card-color);
+}
+
+.card-left {
+  padding: 16px 16px 16px 20px;
+  border-right: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+}
+.kw {
+  font-family: 'Unbounded', sans-serif;
+  font-size: .9rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  color: var(--card-color);
+}
+.kw-icon {
+  font-size: 18px;
+  line-height: 1;
+  filter: drop-shadow(0 0 6px var(--card-color));
+}
+
+.card-right {
+  padding: 14px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.card-desc {
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.6;
+}
+.card-alt {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: .08em;
+}
+.card-alt span {
+  display: inline-block;
+  background: var(--bg3);
+  border: 1px solid var(--line);
+  padding: 1px 7px;
+  border-radius: 2px;
+  margin-right: 4px;
+}
+
+/* Code example */
+.code-ex {
+  background: var(--bg3);
+  border-left: 2px solid var(--card-color);
+  padding: 8px 12px;
+  font-size: 11px;
+  line-height: 1.7;
+  overflow-x: auto;
+}
+.code-ex .cm  { color: var(--muted); }
+.code-ex .kwd { color: var(--card-color); font-weight: 700; }
+.code-ex .txt { color: var(--text); }
+
+/* ── FIX ── */
+.fix  { --card-color: var(--fix); }
+.todo { --card-color: var(--todo); }
+.hack { --card-color: var(--hack); }
+.warn { --card-color: var(--warn); }
+.perf { --card-color: var(--perf); }
+.note { --card-color: var(--note); }
+.test { --card-color: var(--test); }
+
+/* ── KEYMAPS ── */
+.section-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: .65rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.keymap-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  margin-bottom: 48px;
+}
+.km {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  font-size: 11px;
+}
+.km-key {
+  background: var(--bg3);
+  border: 1px solid var(--muted);
+  border-radius: 3px;
+  padding: 2px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+  color: #fff;
+}
+.km-desc { color: var(--muted); }
+
+/* ── SYNTAX BLOCK ── */
+.syntax-block {
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  overflow: hidden;
+  margin-bottom: 48px;
+}
+.syntax-header {
+  background: var(--bg3);
+  border-bottom: 1px solid var(--line);
+  padding: 8px 16px;
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.syntax-body {
+  padding: 20px;
+  line-height: 2;
+  font-size: 12.5px;
+}
+.syn-cm   { color: var(--muted); }
+.syn-fix  { color: var(--fix);  font-weight: 700; }
+.syn-todo { color: var(--todo); font-weight: 700; }
+.syn-hack { color: var(--hack); font-weight: 700; }
+.syn-warn { color: var(--warn); font-weight: 700; }
+.syn-perf { color: var(--perf); font-weight: 700; }
+.syn-note { color: var(--note); font-weight: 700; }
+.syn-test { color: var(--test); font-weight: 700; }
+.syn-txt  { color: var(--text); }
+
+footer {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: .1em;
+  text-align: center;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+</style>
+</head>
+<body>
+<main>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">folke/todo-comments.nvim &mdash; reference card</div>
+    <div class="title">
+      <span class="dim">todo</span><br>
+      <span class="acc">comments</span>
+    </div>
+    <div class="header-sub">
+      7 keywords &nbsp;&middot;&nbsp; highlights LSP &nbsp;&middot;&nbsp; Telescope + Trouble
+    </div>
+  </div>
+
+  <!-- SYNTAX EXAMPLES -->
+  <div class="section-title">Syntaxe dans le code</div>
+  <div class="syntax-block">
+    <div class="syntax-header">tous les langages</div>
+    <div class="syntax-body">
+      <div><span class="syn-cm">-- </span><span class="syn-fix">FIX:</span><span class="syn-txt"> pointeur null si liste vide</span></div>
+      <div><span class="syn-cm">-- </span><span class="syn-todo">TODO:</span><span class="syn-txt"> ajouter la gestion des erreurs</span></div>
+      <div><span class="syn-cm">-- </span><span class="syn-hack">HACK:</span><span class="syn-txt"> contournement temporaire du bug #42</span></div>
+      <div><span class="syn-cm">-- </span><span class="syn-warn">WARN:</span><span class="syn-txt"> ne pas appeler en dehors du thread principal</span></div>
+      <div><span class="syn-cm">-- </span><span class="syn-perf">PERF:</span><span class="syn-txt"> O(n^2) ici, a optimiser pour grands datasets</span></div>
+      <div><span class="syn-cm">-- </span><span class="syn-note">NOTE:</span><span class="syn-txt"> voir RFC 2119 pour la specification</span></div>
+      <div><span class="syn-cm">-- </span><span class="syn-test">TEST:</span><span class="syn-txt"> cas limite avec liste vide a couvrir</span></div>
+      <br>
+      <div><span class="syn-cm">/* </span><span class="syn-fix">FIXME:</span><span class="syn-txt"> fuite memoire dans ce bloc */</span></div>
+      <div><span class="syn-cm"># &nbsp;</span><span class="syn-todo">TODO:</span><span class="syn-txt"> migrer vers la v2 de l'API</span></div>
+      <div><span class="syn-cm">// </span><span class="syn-warn">WARNING:</span><span class="syn-txt"> deprecated depuis Java 11</span></div>
+    </div>
+  </div>
+
+  <!-- KEYWORD CARDS -->
+  <div class="section-title">Keywords</div>
+  <div class="cards">
+
+    <div class="card fix">
+      <div class="card-left">
+        <div class="kw-icon">!</div>
+        <div class="kw">FIX</div>
+      </div>
+      <div class="card-right">
+        <div class="card-desc">Bug a corriger, comportement incorrect, crash connu.</div>
+        <div class="card-alt">
+          <span>FIXME</span><span>BUG</span><span>FIXIT</span><span>ISSUE</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card todo">
+      <div class="card-left">
+        <div class="kw-icon">&gt;</div>
+        <div class="kw">TODO</div>
+      </div>
+      <div class="card-right">
+        <div class="card-desc">Fonctionnalite a implementer, code incomplet a finir.</div>
+      </div>
+    </div>
+
+    <div class="card hack">
+      <div class="card-left">
+        <div class="kw-icon">~</div>
+        <div class="kw">HACK</div>
+      </div>
+      <div class="card-right">
+        <div class="card-desc">Solution temporaire, workaround a remplacer un jour.</div>
+        <div class="card-alt">
+          <span>TEMP</span><span>TEMPORARY</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card warn">
+      <div class="card-left">
+        <div class="kw-icon">W</div>
+        <div class="kw">WARN</div>
+      </div>
+      <div class="card-right">
+        <div class="card-desc">Danger, comportement inattendu possible, a lire avant de modifier.</div>
+        <div class="card-alt">
+          <span>WARNING</span><span>XXX</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card perf">
+      <div class="card-left">
+        <div class="kw-icon">P</div>
+        <div class="kw">PERF</div>
+      </div>
+      <div class="card-right">
+        <div class="card-desc">Goulot d'etranglement, complexite a reduire, optimisation possible.</div>
+        <div class="card-alt">
+          <span>OPTIM</span><span>OPTIMIZE</span><span>PERFORMANCE</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card note">
+      <div class="card-left">
+        <div class="kw-icon">N</div>
+        <div class="kw">NOTE</div>
+      </div>
+      <div class="card-right">
+        <div class="card-desc">Information importante, contexte, lien vers une spec ou une RFC.</div>
+        <div class="card-alt">
+          <span>INFO</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card test">
+      <div class="card-left">
+        <div class="kw-icon">T</div>
+        <div class="kw">TEST</div>
+      </div>
+      <div class="card-right">
+        <div class="card-desc">Cas de test a ecrire, scenario a couvrir, assertion a verifier.</div>
+        <div class="card-alt">
+          <span>TESTING</span><span>PASSED</span><span>FAILED</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- KEYMAPS -->
+  <div class="section-title">Keymaps</div>
+  <div class="keymap-grid">
+    <div class="km"><span class="km-key">]t</span><span class="km-desc">todo suivant</span></div>
+    <div class="km"><span class="km-key">[t</span><span class="km-desc">todo precedent</span></div>
+    <div class="km"><span class="km-key">]f</span><span class="km-desc">FIX suivant</span></div>
+    <div class="km"><span class="km-key">[f</span><span class="km-desc">FIX precedent</span></div>
+    <div class="km"><span class="km-key">&lt;leader&gt;ft</span><span class="km-desc">Telescope : tous les todos</span></div>
+    <div class="km"><span class="km-key">&lt;leader&gt;fF</span><span class="km-desc">Telescope : bugs seulement</span></div>
+    <div class="km"><span class="km-key">&lt;leader&gt;xt</span><span class="km-desc">Trouble : tous les todos</span></div>
+    <div class="km"><span class="km-key">&lt;leader&gt;xT</span><span class="km-desc">Trouble : FIX + WARN urgents</span></div>
+  </div>
+
+</main>
+
+<footer>todo-comments.nvim &nbsp;&middot;&nbsp; folke &nbsp;&middot;&nbsp; coherent avec kanagawa wave</footer>
+
+</body>
+</html>
