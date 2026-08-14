@@ -10,6 +10,29 @@ return {
 	config = function()
 		local dap = require("dap")
 
+		-- Python debugging (nvim-dap-python was a dependency but setup()
+		-- was never called — dap.configurations.python didn't exist before this)
+		-- Python debugging (nvim-dap-python was a dependency but setup()
+		-- was never called — dap.configurations.python didn't exist before this)
+		local function venv_or_system_python()
+			local venv_python = vim.fn.getcwd() .. "/.venv/bin/python3"
+			if vim.fn.executable(venv_python) == 1 then
+				return venv_python
+			end
+			return "python3"
+		end
+		require("dap-python").setup(venv_or_system_python())
+
+		-- re-run setup with the right interpreter whenever you open a
+		-- python file in a different project (setup() just re-registers
+		-- the adapter, safe to call repeatedly)
+		vim.api.nvim_create_autocmd("FileType", {
+			pattern = "python",
+			callback = function()
+				require("dap-python").setup(venv_or_system_python())
+			end,
+		})
+
 		-- Configuration pour le débogage Java
 		dap.adapters.java = {
 			type = "server",

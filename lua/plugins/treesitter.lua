@@ -1,13 +1,12 @@
-return{
+return {
 	"nvim-treesitter/nvim-treesitter",
-	branch = 'master', 
+	branch = "master",
 	lazy = false,
 	build = ":TSUpdate",
-	opts=
-	{
-	  ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "elixir", "heex", "javascript", "html" ,'python','java','cpp'},
-          sync_install = false,
-          highlight = { enable = true },
-          indent = { enable = true }
-  }
+	opts = {
+		ensure_installed = { "c", "lua", "vim", "vimdoc", "html", "python", "java", "cpp", "rust" },
+		sync_install = false,
+		highlight = { enable = true },
+		indent = { enable = true },
+	},
 }

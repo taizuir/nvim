@@ -22,9 +22,10 @@ return {
 			lua = { "stylua" },
 			python = { "isort", "black" },
 			java = { "google-java-format" },
-			c = { 'clang-format' },
-			cpp = { 'clang-format' }
-
+			c = { "clang-format" },
+			cpp = { "clang-format" },
+			rust = { "rustfmt" },
+			ocaml = { "ocamlformat" },
 		},
 		-- Set default options
 		default_format_opts = {
@@ -44,4 +45,3 @@ return {
 		vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
 	end,
 }
-

@@ -36,12 +36,16 @@ return {
 		},
 
 		-- (Default) Only show the documentation popup when manually triggered
-		completion = { documentation = { auto_show = false }, ghost_text = { enabled = true, show_with_menu = true } },
+		completion = { documentation = { auto_show = true }, ghost_text = { enabled = true, show_with_menu = true } },
 		signature = { enabled = true },
 		-- Default list of enabled providers defined so that you can extend it
 		-- elsewhere in your config, without redefining it, due to `opts_extend`
 		sources = {
 			default = { "lsp", "path", "snippets", "buffer" },
+			-- adds crates.nvim's version-completion source, only in Cargo.toml
+			per_filetype = {
+				toml = { "lsp", "path", "snippets", "buffer", "crates" },
+			},
 		},
 
 		-- (Default) Rust fuzzy matcher for typo resistance and significantly better performance
