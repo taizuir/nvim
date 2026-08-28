@@ -55,6 +55,7 @@ return {
 		-- vim.keymap.set("n", "<C-">, function()
 		-- harpoon:list():select(3)
 		-- end)
+		--
 		vim.keymap.set("n", "<C-'>", function()
 			harpoon:list():select(4)
 		end)
@@ -68,8 +69,8 @@ return {
 		end)
 
 		-- Telescope inside Harpoon Window
-		-- vim.keymap.set("n", "<C-f>", function()
-		-- 	toggle_telescope(harpoon:list())
-		-- end)
+		vim.keymap.set("n", '<C-">', function()
+			harpoon:list():select(3)
+		end)
 	end,
 }

@@ -28,7 +28,10 @@ return {
 		vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "Telescope live grep" })
 		vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Telescope buffers" })
 		vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Telescope help tags" })
-		vim.keymap.set("n", "<le <leader>fd", function() local word = vim.fn.expand("<cWORD>")builtin.grep_string({ search = word }) end, { desc = "Find connected words under cursor" })
+		vim.keymap.set("n", "<leader>fd", function()
+			local word = vim.fn.expand("<cWORD>")
+			builtin.grep_string({ search = word })
+		end, { desc = "Find connected words under cursor" })
 
 		vim.keymap.set("n", "<leader>fc", builtin.commands, { desc = "Telescope commands" })
 		vim.keymap.set("n", "<leader>fch", builtin.command_history, { desc = "Telescope history of commands" })

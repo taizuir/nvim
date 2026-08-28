@@ -1,9 +1,9 @@
 return {
-	"thesimonho/kanagawa-paper.nvim",
+	"rebelot/kanagawa.nvim",
 	lazy = false,
 	priority = 1000,
 	init = function()
-		vim.cmd.colorscheme("kanagawa-paper-ink")
+		vim.cmd.colorscheme("kanagawa-dragon")
 	end,
 	opts = { ... },
 }

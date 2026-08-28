@@ -4,9 +4,9 @@ return {
 	opts = {
 		toggler = {
 			--     ---Line-comment toggle keymap
-			line = "c",
+			line = "gcc",
 			--     ---Block-comment toggle keymap
-			block = "cc",
+			block = "gbc",
 			--   -- add any options here
 		},
 		--
