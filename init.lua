@@ -1,5 +1,5 @@
 require("config.lazy")
-
+vim.api.nvim_create_user_command("W", "w !sudo tee % >/dev/null", {})
 vim.keymap.set("n", "<leader><leader>", function()
 	local file_type = vim.fn.expand("%:e")
 	local commands = {
