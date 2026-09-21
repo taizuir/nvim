@@ -215,6 +215,7 @@ return {
 			-- gopls = {},
 			pyright = {},
 			jdtls = {},
+			ocamllsp = {},
 			-- rust_analyzer is intentionally NOT configured here — rustaceanvim
 			-- (lua/plugins/rustaceanvim.lua) owns rust-analyzer setup entirely.
 			-- Configuring it in both places attaches two LSP clients per buffer.
@@ -270,19 +271,41 @@ return {
 		-- home-manager notes).
 		require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
+		-- mason-lspconfig v2 dropped the `handlers` API entirely (it is now a
+		-- silently ignored no-op field), so the block that used to live here
+		-- never actually ran: none of `servers`' capabilities/settings above
+		-- were being applied, to ANY server. Configure each one directly via
+		-- vim.lsp.config() instead, which is what mason-lspconfig's own
+		-- automatic_enable feature reads from when it later calls
+		-- vim.lsp.enable() for whichever of these are Mason-installed.
+		for server_name, server_opts in pairs(servers) do
+			server_opts.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server_opts.capabilities or {})
+			vim.lsp.config(server_name, server_opts)
+		end
+
 		require("mason-lspconfig").setup({
 			ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
 			automatic_installation = false,
-			handlers = {
-				function(server_name)
-					local server = servers[server_name] or {}
-					-- This handles overriding only values explicitly passed
-					-- by the server configuration above. Useful when disabling
-					-- certain features of an LSP (for example, turning off formatting for ts_ls)
-					server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-					require("lspconfig")[server_name].setup(server)
-				end,
-			},
+			-- automatic_enable (default: true) calls vim.lsp.enable() for
+			-- EVERY Mason-installed package that has a matching lspconfig
+			-- server definition, with no way to opt individual servers out
+			-- via `servers` above. Two problems that caused in practice:
+			--  - "rust_analyzer" is installed via Mason only so rustaceanvim
+			--    (lua/plugins/rustaceanvim.lua) can point at it; automatic_enable
+			--    was ALSO separately enabling it a few seconds after startup,
+			--    attaching a second, unconfigured rust-analyzer (no clippy
+			--    checkOnSave, no blink.cmp capabilities) to every Rust buffer
+			--    alongside rustaceanvim's own.
+			--  - "stylua" ships an `--lsp` formatting-only mode that
+			--    nvim-lspconfig now recognizes as a server, so it was
+			--    auto-attaching to every Lua buffer as if it were a real
+			--    language server (no diagnostics, no real completions).
+			automatic_enable = { exclude = { "rust_analyzer", "stylua" } },
 		})
+
+		-- ocamllsp comes from nixpkgs (ocamlPackages.ocaml-lsp in
+		-- configuration.nix), not Mason, so automatic_enable above never
+		-- touches it — it was never being started at all. Enable it explicitly.
+		vim.lsp.enable("ocamllsp")
 	end,
 }
